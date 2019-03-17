@@ -15,7 +15,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 // This table is linked to a specific user
 @Entity(foreignKeys = @ForeignKey(onDelete = CASCADE,
-entity = UsersTable.class, parentColumns = "user_id", childColumns = "user_id"))
+entity = UsersTable.class, parentColumns = "user_id", childColumns = "medicine_id"))
 public class Medicines {
 
     @NonNull

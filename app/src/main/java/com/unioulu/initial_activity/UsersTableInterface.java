@@ -14,7 +14,7 @@ public interface UsersTableInterface {
 
     // Returns 3 if abort !
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    int createUser(UsersTable usersTable);
+    void createUser(UsersTable usersTable);
 
     @Query("SELECT * FROM UsersTable WHERE username = :username and password = :password")
     UsersTable fetchUserByUsernameAndPassword(String username, String password);

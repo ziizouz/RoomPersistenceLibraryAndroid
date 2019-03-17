@@ -11,7 +11,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(onDelete = CASCADE,
 entity = UsersTable.class, parentColumns = "user_id",
-childColumns = "user_id"))
+childColumns = "emer_contact_id"))
 public class EmergencySettingsTable {
     @NonNull
     @PrimaryKey(autoGenerate = true)

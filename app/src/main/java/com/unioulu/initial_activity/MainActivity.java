@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-
+                // Adding user
 
                 // Adding a medicine
                 Medicines medicine = new Medicines(
