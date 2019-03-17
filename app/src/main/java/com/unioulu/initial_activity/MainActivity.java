@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
                 appDatabase.usersTableInterface().createUser(user);
 
+                Log.d(TAG_DB, "Added: " + user.toString());
+
                 // Adding Emergency settings contacts
                 EmergencySettingsTable emergencyContact = new EmergencySettingsTable(
                         "my son",
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                         "storage/0/Pictures/my_sons_pic.png"
                 );
                 appDatabase.emergencySettingsInterface().insertEmergencyContact(emergencyContact);
+                Log.d(TAG_DB, "Added: " + emergencyContact.toString());
 
                 // Adding settings
                 // ---------------------------------- Generating some fake settings time -----------------
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     );
 
                     appDatabase.otherSettingsInterface().insertOtherSettings(otherSettings);
+                    Log.d(TAG_DB, "Added: " + otherSettings.toString());
 
                 }else{ // If table already contains settings, just update it
                     OtherSettingsTable otherSettings = new OtherSettingsTable(
@@ -139,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     );
 
                     appDatabase.otherSettingsInterface().updateOtherSettings(otherSettings);
+                    Log.d(TAG_DB, "Added: " + otherSettings.toString());
                 }
 
                 // Adding a medicine
@@ -198,9 +203,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Printing a single medicine
-                medicine = appDatabase.medicineDBInterface().fetchOneMedicineByName("paracetamol");
+                medicine = appDatabase.medicineDBInterface().fetchOneMedicineByName(editText.getText().toString());
 
-                Log.d(TAG_DB, "medicine retreived: " + medicine.toString());
+                if (medicine != null)
+                    Log.d(TAG_DB, "medicine retreived: " + medicine.toString());
 
 
                 // Printing out medicines' statistics
