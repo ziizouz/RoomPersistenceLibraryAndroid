@@ -13,7 +13,9 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 // https://medium.freecodecamp.org/room-sqlite-beginner-tutorial-2e725e47bfab
 
-@Entity
+// This table is linked to a specific user
+@Entity(foreignKeys = @ForeignKey(onDelete = CASCADE,
+entity = UsersTable.class, parentColumns = "user_id", childColumns = "user_id"))
 public class Medicines {
 
     @NonNull
