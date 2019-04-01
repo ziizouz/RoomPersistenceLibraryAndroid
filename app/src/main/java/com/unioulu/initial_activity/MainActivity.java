@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private EditText editText;
     private static final String DATABASE_NAME = "medicines_db";
-    private static final String TAG_DB        = "DB";
+    private static final String TAG_DB        = "DB_TEST";
     private AppDatabase appDatabase;
 
     @Override
@@ -78,19 +79,66 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                int counts = appDatabase.usersTableInterface().usersCount();
+                Log.d(TAG_DB, "Users count: " + counts);
+
                 // Adding user
                 UsersTable user = new UsersTable(
                         "Antti",
                         "antii.fi@gmail.com",
-                        "1234password"
+                        "1234password" ,
+                        true
                 );
 
-                appDatabase.usersTableInterface().createUser(user);
+                try{
+                    appDatabase.usersTableInterface().createUser(user);
+                }catch (Exception e){
+                    Log.d(TAG_DB, "Email already exists in the database !");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Email already exists in the database", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 Log.d(TAG_DB, "Added: " + user.toString());
 
+
+                counts = appDatabase.usersTableInterface().usersCount();
+                Log.d(TAG_DB, "Users count: " + counts);
+
+
+                // Adding another user
+                user = new UsersTable(
+                        "Mali",
+                        "mali.fi@gmail.com",
+                        "1234password" ,
+                        true
+                );
+
+                try{
+                    appDatabase.usersTableInterface().createUser(user);
+                }catch (Exception e){
+                    Log.d(TAG_DB, "Email already exists in the database !");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Email already exists in the database", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                Log.d(TAG_DB, "Added: " + user.toString());
+
+
+                counts = appDatabase.usersTableInterface().usersCount();
+                Log.d(TAG_DB, "Users count: " + counts);
+
+                UsersTable userEmer = appDatabase.usersTableInterface().fetchUserByEmail("mali.fi@gmail.com");
                 // Adding Emergency settings contacts
                 EmergencySettingsTable emergencyContact = new EmergencySettingsTable(
+                        userEmer.getUser_id(),
                         "my son",
                         "+358 42 4210 012",
                         "storage/0/Pictures/my_sons_pic.png"
@@ -98,6 +146,18 @@ public class MainActivity extends AppCompatActivity {
                 appDatabase.emergencySettingsInterface().insertEmergencyContact(emergencyContact);
                 Log.d(TAG_DB, "Added: " + emergencyContact.toString());
 
+                // Adding another Emergency settings contacts
+                EmergencySettingsTable emergencyContact2 = new EmergencySettingsTable(
+                        userEmer.getUser_id(),
+                        "my daughter",
+                        "+358 46 4340 014",
+                        "storage/0/Pictures/my_daughter_pic.png"
+                );
+                appDatabase.emergencySettingsInterface().insertEmergencyContact(emergencyContact2);
+                Log.d(TAG_DB, "Added: " + emergencyContact2.toString());
+
+
+                /*
                 // Adding settings
                 // ---------------------------------- Generating some fake settings time -----------------
                 // Vars only for testing purposes
@@ -145,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
                     appDatabase.otherSettingsInterface().updateOtherSettings(otherSettings);
                     Log.d(TAG_DB, "Added: " + otherSettings.toString());
                 }
-
+                */
+                /*
                 // Adding a medicine
                 Medicines medicine = new Medicines(
                         medicine_name,
@@ -167,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
                 appDatabase.medicineStatisticsInterface().insertDateAndStatus(medicineStatisticsElement);
                 Log.d(TAG_DB, "Medicine statistic information added !");
+                */
             }
         }).start();
 
@@ -183,42 +245,49 @@ public class MainActivity extends AppCompatActivity {
 
                 // Printing user
                 List<UsersTable> users = appDatabase.usersTableInterface().fetchAllUsers();
-                for (UsersTable user : users){
-                    Log.d(TAG_DB, "Users");
-                    Log.d(TAG_DB, user.toString());
+                if (users.size() > 0) {
+                    for (UsersTable user : users) {
+                        Log.d(TAG_DB, "Users");
+                        Log.d(TAG_DB, user.toString());
+                    }
                 }
 
                 // Priting settings
                 List<OtherSettingsTable> otherSettings = appDatabase.otherSettingsInterface().fetchAllOtherSettings();
-                for (OtherSettingsTable setting: otherSettings){
-                    Log.d(TAG_DB, "OtherSettings");
-                    Log.d(TAG_DB, setting.toString());
+                if (otherSettings.size() > 0 ) {
+                    for (OtherSettingsTable setting : otherSettings) {
+                        Log.d(TAG_DB, "OtherSettings");
+                        Log.d(TAG_DB, setting.toString());
+                    }
                 }
 
                 // Priting emergency contacts
-                List<EmergencySettingsTable> emergencySettingsContacts = appDatabase.emergencySettingsInterface().fetchAllEmergencyContacts();
-                for (EmergencySettingsTable contact: emergencySettingsContacts){
-                    Log.d(TAG_DB, "Emergency contact");
-                    Log.d(TAG_DB, contact.toString());
+                List<EmergencySettingsTable> emergencySettingsContacts = appDatabase.emergencySettingsInterface().fetchAllEmergencyContacts(0);
+                if (emergencySettingsContacts.size() > 0) {
+
+                    for (EmergencySettingsTable contact : emergencySettingsContacts) {
+                        Log.d(TAG_DB, "Emergency contact");
+                        Log.d(TAG_DB, contact.toString());
+                    }
                 }
 
                 // Printing a single medicine
                 medicine = appDatabase.medicineDBInterface().fetchOneMedicineByName(editText.getText().toString());
 
-                if (medicine != null)
+                if (medicine != null) {
                     Log.d(TAG_DB, "medicine retreived: " + medicine.toString());
 
 
-                // Printing out medicines' statistics
-                List<MedicineStatistics> statOfMidicine = appDatabase.medicineStatisticsInterface().fetchMedicineStatisticsByID(medicine.getId());
+                    // Printing out medicines' statistics
+                    List<MedicineStatistics> statOfMidicine = appDatabase.medicineStatisticsInterface().fetchMedicineStatisticsByID(medicine.getId());
 
-                for (int i=0; i< statOfMidicine.size(); i++){
-                    Log.d(TAG_DB, statOfMidicine.get(i).toString());
-                    Long date = statOfMidicine.get(i).getDate();
-                    String dateString = DateFormat.format("MM/dd/yyyy", new Date(date)).toString();
-                    Log.d(TAG_DB, "Date: "+ dateString);
+                    for (int i = 0; i < statOfMidicine.size(); i++) {
+                        Log.d(TAG_DB, statOfMidicine.get(i).toString());
+                        Long date = statOfMidicine.get(i).getDate();
+                        String dateString = DateFormat.format("MM/dd/yyyy", new Date(date)).toString();
+                        Log.d(TAG_DB, "Date: " + dateString);
+                    }
                 }
-
             }
         }).start();
 

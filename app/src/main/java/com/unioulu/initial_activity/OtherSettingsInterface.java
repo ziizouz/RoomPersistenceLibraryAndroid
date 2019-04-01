@@ -12,7 +12,7 @@ import java.util.List;
 public interface OtherSettingsInterface {
 
     // To be used only if table is empty
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOtherSettings(OtherSettingsTable otherSettingsTable);
 
     // To be used from other settings fragment
