@@ -5,16 +5,20 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(onDelete = CASCADE,
-        entity = Medicines.class, parentColumns = "medicine_id", childColumns = "id"))
+@Entity
 public class MedicineStatistics {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @NonNull
+    @PrimaryKey
+    private int id; // UserID
 
-    @ColumnInfo(name="date")
+    @ColumnInfo(name = "medicine_name")
+    private String medicine_name;
+
+    @ColumnInfo(name = "date")
     private Long date;
 
     @ColumnInfo(name = "status")
@@ -23,9 +27,12 @@ public class MedicineStatistics {
 
     // Constructors
     @Ignore
-    public MedicineStatistics(){} // Empty constructor
+    public MedicineStatistics() {
+    } // Empty constructor
 
-    public MedicineStatistics(Long date, String status) {
+    public MedicineStatistics(int id, String medicine_name, Long date, String status) {
+        this.id = id;
+        this.medicine_name = medicine_name;
         this.date = date;
         this.status = status;
     }
@@ -36,6 +43,10 @@ public class MedicineStatistics {
 
     public int getId() {
         return id;
+    }
+
+    public String getMedicine_name() {
+        return medicine_name;
     }
 
     public Long getDate() {
@@ -53,6 +64,10 @@ public class MedicineStatistics {
         this.id = id;
     }
 
+    public void setMedicine_name(String medicine_name) {
+        this.medicine_name = medicine_name;
+    }
+
     public void setDate(Long date) {
         this.date = date;
     }
@@ -62,11 +77,11 @@ public class MedicineStatistics {
     }
 
     // ToString
-
     @Override
     public String toString() {
         return "MedicineStatistics{" +
                 "id=" + id +
+                ", medicine_name='" + medicine_name + '\'' +
                 ", date=" + date +
                 ", status='" + status + '\'' +
                 '}';

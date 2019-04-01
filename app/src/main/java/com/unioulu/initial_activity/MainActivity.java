@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG_DB, "Added: " + emergencyContact2.toString());
 
 
-                /*
+
                 // Adding settings
                 // ---------------------------------- Generating some fake settings time -----------------
                 // Vars only for testing purposes
@@ -181,8 +181,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 // --------------------------------- End of fake settings time generation --------------------------
                 // Inserting new settings only if no previous settings are found in the table (Otherwise use update)
-                if (appDatabase.otherSettingsInterface().fetchAllOtherSettings().size() == 0){
+                if (appDatabase.otherSettingsInterface().fetchAllOtherSettings(userEmer.getUser_id()).size() == 0){
                     OtherSettingsTable otherSettings = new OtherSettingsTable(
+                            userEmer.getUser_id(),
                             long_time[0],
                             long_time[1],
                             long_time[2],
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }else{ // If table already contains settings, just update it
                     OtherSettingsTable otherSettings = new OtherSettingsTable(
+                            userEmer.getUser_id(),
                             long_time[0],
                             long_time[1],
                             long_time[2],
@@ -205,10 +207,10 @@ public class MainActivity extends AppCompatActivity {
                     appDatabase.otherSettingsInterface().updateOtherSettings(otherSettings);
                     Log.d(TAG_DB, "Added: " + otherSettings.toString());
                 }
-                */
-                /*
+
                 // Adding a medicine
                 Medicines medicine = new Medicines(
+                        userEmer.getUser_id(),
                         medicine_name,
                         medicine_name+"_picture_URL",
                         "8:00",
@@ -222,13 +224,15 @@ public class MainActivity extends AppCompatActivity {
 
                 // Adding medicine statistic information
                 MedicineStatistics medicineStatisticsElement = new MedicineStatistics(
+                        userEmer.getUser_id(),
+                        medicine.getMedicine_name(),
                         Calendar.getInstance().getTime().getTime(),     // Date and time (Long format)
                         "100"   // Status string
                 );
 
                 appDatabase.medicineStatisticsInterface().insertDateAndStatus(medicineStatisticsElement);
                 Log.d(TAG_DB, "Medicine statistic information added !");
-                */
+
             }
         }).start();
 
@@ -239,6 +243,9 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                UsersTable userEmer = appDatabase.usersTableInterface().fetchUserByEmail("mali.fi@gmail.com");
+                int id = userEmer.getUser_id();
 
 
                 Medicines medicine;
@@ -253,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Priting settings
-                List<OtherSettingsTable> otherSettings = appDatabase.otherSettingsInterface().fetchAllOtherSettings();
+                List<OtherSettingsTable> otherSettings = appDatabase.otherSettingsInterface().fetchAllOtherSettings(id);
                 if (otherSettings.size() > 0 ) {
                     for (OtherSettingsTable setting : otherSettings) {
                         Log.d(TAG_DB, "OtherSettings");
@@ -262,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Priting emergency contacts
-                List<EmergencySettingsTable> emergencySettingsContacts = appDatabase.emergencySettingsInterface().fetchAllEmergencyContacts(0);
+                List<EmergencySettingsTable> emergencySettingsContacts = appDatabase.emergencySettingsInterface().fetchAllEmergencyContacts(id);
                 if (emergencySettingsContacts.size() > 0) {
 
                     for (EmergencySettingsTable contact : emergencySettingsContacts) {
@@ -272,14 +279,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Printing a single medicine
-                medicine = appDatabase.medicineDBInterface().fetchOneMedicineByName(editText.getText().toString());
+                medicine = appDatabase.medicineDBInterface().fetchOneMedicineByName(editText.getText().toString(),id);
 
                 if (medicine != null) {
                     Log.d(TAG_DB, "medicine retreived: " + medicine.toString());
 
 
                     // Printing out medicines' statistics
-                    List<MedicineStatistics> statOfMidicine = appDatabase.medicineStatisticsInterface().fetchMedicineStatisticsByID(medicine.getId());
+                    List<MedicineStatistics> statOfMidicine = appDatabase.medicineStatisticsInterface().fetchMedicineStatisticsByID(id);
 
                     for (int i = 0; i < statOfMidicine.size(); i++) {
                         Log.d(TAG_DB, statOfMidicine.get(i).toString());

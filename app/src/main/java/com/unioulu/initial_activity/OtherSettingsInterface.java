@@ -20,8 +20,8 @@ public interface OtherSettingsInterface {
     void updateOtherSettings(OtherSettingsTable otherSettingsTable);
 
     // Only used for debugging
-    @Query("SELECT * FROM OtherSettingsTable")
-    List<OtherSettingsTable> fetchAllOtherSettings();
+    @Query("SELECT * FROM OtherSettingsTable WHERE user_id = :user_id")
+    List<OtherSettingsTable> fetchAllOtherSettings(int user_id);
 
     @Query("DELETE FROM OtherSettingsTable")
     void deleteAllOtherSettings();
