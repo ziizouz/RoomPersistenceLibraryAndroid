@@ -88,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     appDatabase.usersTableInterface().createUser(user);
                 }catch (Exception e){
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Email already exists !", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     Log.d(TAG_DB, "Email already exists !");
                 }
 
