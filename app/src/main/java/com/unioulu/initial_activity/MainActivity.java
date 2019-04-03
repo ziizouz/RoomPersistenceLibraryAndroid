@@ -73,8 +73,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void AddClicked(View view){
 
-        final String medicine_name = editText.getText().toString();
+        final String username = editText.getText().toString();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                UsersTable user = new UsersTable(
+                        username,
+                        username+"@gmail.com",
+                        "password",
+                        true
+                );
+                try {
+                    appDatabase.usersTableInterface().createUser(user);
+                }catch (Exception e){
+                    Log.d(TAG_DB, "Email already exists !");
+                }
+
+            }
+        }).start();
+
+
+
+        /*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -235,11 +257,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).start();
-
+        */
     }
 
     public void PrintAllClicked(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+                List<UsersTable> olduser = appDatabase.usersTableInterface().fetchAllUsers();
+                for (UsersTable u : olduser)
+                    Log.d(TAG_DB, u.toString());
+
+            }
+        }).start();
+
+
+
+
+        /*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -297,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
+        */
     }
+
 }
